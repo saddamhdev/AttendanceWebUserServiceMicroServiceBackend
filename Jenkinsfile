@@ -4,15 +4,15 @@ pipeline {
     environment {
         PROD_HOST  = credentials('DO_HOST')
         PROD_USER  = credentials('DO_USER')
-        DEPLOY_DIR = '/www/wwwroot/CITSNVN/jenkins/sscSpringbootBackend'
-        JAR_NAME   = 'quizbackend-1.0.jar'
+        DEPLOY_DIR = '/www/wwwroot/snvn.deepseahost.com/userservice'
+        JAR_NAME   = 'userservice-1.0.jar'
         PORT       = '3086'
     }
 
     stages {
         stage('Clone Repository') {
             steps {
-                git branch: 'main', url: 'https://github.com/Saddam-Hossen/JenkinsSpringbootProjectBackend'
+                git branch: 'main', url: 'https://github.com/Saddam-Hossen/AttendanceWebUserServiceMicroServiceBackend'
             }
         }
 

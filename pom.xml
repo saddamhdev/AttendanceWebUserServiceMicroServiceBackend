@@ -9,15 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.example</groupId>
-<<<<<<< HEAD
-	<artifactId>quizbackend</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<name>quizbackend</name>
-=======
 	<artifactId>userservice</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>-1.0</version>
 	<name>userservice</name>
->>>>>>> e578cacc7894235eed0f181de9721cbe75df770f
 	<description>Demo project for Spring Boot</description>
 	<url/>
 	<licenses>
@@ -54,8 +48,7 @@
 			<artifactId>jjwt-api</artifactId>
 			<version>0.11.5</version>
 		</dependency>
-
-<<<<<<< HEAD
+		
 			<dependency>
 				<groupId>org.apache.poi</groupId>
 				<artifactId>poi</artifactId>
@@ -67,10 +60,6 @@
 				<version>5.2.3</version>
 			</dependency>
 
-
-
-=======
->>>>>>> e578cacc7894235eed0f181de9721cbe75df770f
 		<!-- JJWT Impl (this is required for the DefaultJwtParser class) -->
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
