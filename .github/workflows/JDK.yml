@@ -1,0 +1,113 @@
+name: Java CI + Deploy With RollBack
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      deploy:
+        description: 'Deploy to server after build?'
+        required: false
+        default: 'true'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Cache Maven packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Build with Maven
+        run: mvn clean install
+
+      - name: Run tests
+        run: mvn test
+
+      - name: Upload JAR Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: java-jar
+          path: target/userservice-0.0.1-SNAPSHOT.jar
+
+  deploy:
+    if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.deploy == 'true' }}
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download JAR Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: java-jar
+
+      - name: Set up SSH key and known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DO_SSH_KEY }}" > ~/.ssh/key.pem
+          chmod 600 ~/.ssh/key.pem
+          ssh-keyscan -H ${{ secrets.DO_HOST }} >> ~/.ssh/do_known_hosts
+
+      - name: Upload new JAR to DigitalOcean
+        run: |
+          scp -i ~/.ssh/key.pem \
+            -o StrictHostKeyChecking=no \
+            -o UserKnownHostsFile=~/.ssh/do_known_hosts \
+            userservice-0.0.1-SNAPSHOT.jar \
+            ${{ secrets.DO_USER }}@${{ secrets.DO_HOST }}:/www/wwwroot/snvn.deepseahost.com/userservice/userservice.jar
+
+      - name: Deploy with rollback support
+        run: |
+          ssh -i ~/.ssh/key.pem \
+            -o StrictHostKeyChecking=no \
+            -o UserKnownHostsFile=~/.ssh/do_known_hosts \
+            ${{ secrets.DO_USER }}@${{ secrets.DO_HOST }} "
+              cd /www/wwwroot/snvn.deepseahost.com/userservice
+
+              echo '📦 Backing up current app...'
+              cp userservice.jar userservice.jar.bak || echo 'No previous app to back up'
+
+              echo '🛑 Stopping current app...'
+              sudo lsof -i :3080 -t | xargs -r kill -9 || echo 'No running app to stop'
+
+              echo '🚀 Starting new app...'
+              nohup java -Xms16m -Xmx32m -jar userservice.jar --server.port=3080 > app.log 2>&1 &
+
+              echo '⏳ Waiting for app to start...'
+              for i in {1..10}; do
+                sleep 2
+                if pgrep -f userservice.jar > /dev/null; then
+                  echo '✅ userservice.jar is now running!'
+                  date '+🕒 Started at %Y-%m-%d %H:%M:%S'
+                  break
+                fi
+              done
+
+              if ! pgrep -f userservice.jar > /dev/null; then
+                echo '❌ App failed to start. Rolling back...'
+                cp userservice.jar.bak userservice.jar
+                nohup java -Xms16m -Xmx32m -jar userservice.jar --server.port=3080 > app.log 2>&1 &
+                echo '🔁 Rollback started...'
+              fi
+
+              echo ''
+              echo '🔍 Running Java Processes:'
+              ps aux | grep java | grep -v grep
+              echo '📄 Last 10 lines do of app.log:'
+              tail -n 10 app.log
+            "
