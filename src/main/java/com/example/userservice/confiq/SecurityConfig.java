@@ -52,7 +52,7 @@ public class SecurityConfig {
 
         if ("prod".equalsIgnoreCase(environment)) {
             System.out.println("Online checking:");
-            return new String[]{"https://attendance.deepseahost.com/","http://attendanceuserservice.deepseahost.com","http://attendanceAttendanceservice.deepseahost.com"};
+            return new String[]{"https://attendance.deepseahost.com/","https://attendanceuserservice.deepseahost.com","https://attendanceAttendanceservice.deepseahost.com"};
         } else {
             System.out.println("local host checking:");
 
