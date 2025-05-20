@@ -6,7 +6,7 @@ pipeline {
         PROD_USER  = credentials('DO_USER')
         DEPLOY_DIR = '/www/wwwroot/snvn.deepseahost.com/userservice'
         JAR_NAME   = 'userservice-1.0.jar'
-        PORT       = '3086'
+        PORT       = '3080'
     }
 
     stages {
