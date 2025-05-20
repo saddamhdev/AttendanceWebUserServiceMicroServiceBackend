@@ -52,19 +52,11 @@ public class SecurityConfig {
 
         if ("prod".equalsIgnoreCase(environment)) {
             System.out.println("Online checking:");
-<<<<<<< HEAD
-            return new String[]{"https://trainingappbackend.deepseahost.com","https://trainingapp.deepseahost.com"};
-        } else {
-            System.out.println("local host checking:");
-
-            return new String[]{"http://localhost:3084"};
-=======
             return new String[]{"https://159.89.172.251:3082","http://159.89.172.251:3080","http://159.89.172.251:3081"};
         } else {
             System.out.println("local host checking:");
 
             return new String[]{"http://localhost:3082"};
->>>>>>> e578cacc7894235eed0f181de9721cbe75df770f
         }
     }
     @Bean
@@ -87,12 +79,8 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues()))
                 .csrf(csrf -> csrf.disable()) // Disable CSRF for APIs
                 .authorizeHttpRequests(auth -> auth
-<<<<<<< HEAD
-                        .requestMatchers("/api/student/login", "/logout").permitAll()
-                       // .requestMatchers("/api/user/**").hasAuthority("ROLE_Admin") // Restrict access
-=======
                         .requestMatchers("/api/user/login", "/logout").permitAll()
-                       // .requestMatchers("/api/user/**").hasAuthority("ROLE_Admin") // Restrict access
+                        // .requestMatchers("/api/user/**").hasAuthority("ROLE_Admin") // Restrict access
                         .requestMatchers( "/api/user/**","/api/role/**").access((authenticationSupplier, context) -> {
                             Authentication authentication = authenticationSupplier.get(); // Unwrap Supplier
 
@@ -104,11 +92,11 @@ public class SecurityConfig {
                                         .map(GrantedAuthority::getAuthority)
                                         .toList(); // Convert to List for easy processing
 
-                               // System.out.println("User Roles: " + userRoles);
+                                // System.out.println("User Roles: " + userRoles);
 
                                 // Extract the requested role dynamically from the user's authorities
                                 for (String role : userRoles) {
-                                   // System.out.println("Checking role: " + role);
+                                    // System.out.println("Checking role: " + role);
                                     return new AuthorizationDecision(true);
                                 }
                                 System.out.println("No matching role found.");
@@ -116,7 +104,6 @@ public class SecurityConfig {
                             return new AuthorizationDecision(false);
                         })
 
->>>>>>> e578cacc7894235eed0f181de9721cbe75df770f
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
