@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.example</groupId>
 	<artifactId>userservice</artifactId>
-	<version>-1.0</version>
+	<version>1.0</version>
 	<name>userservice</name>
 	<description>Demo project for Spring Boot</description>
 	<url/>
@@ -48,7 +48,7 @@
 			<artifactId>jjwt-api</artifactId>
 			<version>0.11.5</version>
 		</dependency>
-		
+
 			<dependency>
 				<groupId>org.apache.poi</groupId>
 				<artifactId>poi</artifactId>
