@@ -5,20 +5,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-<<<<<<< HEAD
 import org.springframework.data.mongodb.config.EnableMongoAuditing;
-=======
->>>>>>> e578cacc7894235eed0f181de9721cbe75df770f
+
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.web.client.RestTemplate;
 import com.example.userservice.model.*;
 
 import java.util.TimeZone;
-<<<<<<< HEAD
-@EnableMongoAuditing
-=======
 
->>>>>>> e578cacc7894235eed0f181de9721cbe75df770f
+@EnableMongoAuditing
+
 @SpringBootApplication
 @EnableMongoRepositories(basePackages = "com.example.userservice.repository")
 public class UserserviceApplication implements CommandLineRunner {

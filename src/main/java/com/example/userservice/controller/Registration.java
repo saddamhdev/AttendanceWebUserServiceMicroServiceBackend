@@ -68,20 +68,20 @@ public class Registration {
     private RegistrationRepository registrationRepository;
 
     @Autowired
-     private EmployeeService employeeService;
+    private EmployeeService employeeService;
 
     @PostMapping("/insert")
     public ResponseEntity<String> insertEmployee(@RequestBody Map<String, String> requestData) {
 
-      // out.println(requestData);
+        // out.println(requestData);
         Optional<Employee> data1 = registrationRepository.findByIdNumberAndStatus(requestData.get("idNumber"), "1");
         if(data1.isPresent()){
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Failed to Insert: use unique id Number.");
         }
         Optional<Employee> data = registrationRepository.findByEmailAndStatus(requestData.get("email"), "1");
-       if(data.isPresent()){
-           return ResponseEntity.status(HttpStatus.CONFLICT).body("Failed to Insert: use unique email.");
-       }
+        if(data.isPresent()){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Failed to Insert: use unique email.");
+        }
 
         if (data.isEmpty()) {
             Employee em=new Employee();
@@ -99,7 +99,7 @@ public class Registration {
             // Save the employee data to the database
             registrationRepository.save(em);
             return ResponseEntity.ok("Successfully Inserted");
-       }
+        }
 
         // Return error response if the employee already exists
         return ResponseEntity.status(HttpStatus.CONFLICT).body("Failed to Insert: Employee already exists.");
@@ -108,8 +108,8 @@ public class Registration {
     @PostMapping("/update")
     public ResponseEntity<String> updateEmployee(@RequestBody Map<String, String> requestData) {
 
-       // out.println(requestData);
-      //  Optional<Employee> data = registrationRepository.findByIdNumberAndStatus(requestData.get("idNumber"), "1");
+        // out.println(requestData);
+        //  Optional<Employee> data = registrationRepository.findByIdNumberAndStatus(requestData.get("idNumber"), "1");
         Optional<Employee> data = registrationRepository.findById(requestData.get("rowId"));
         Employee data1=data.get();
         List<String> typeList = data1.getType();
@@ -140,7 +140,7 @@ public class Registration {
             em.setCurrentTimee(requestData.get("currentTimee"));
             em.setName(requestData.get("name"));
             // Save the employee data to the database
-             registrationRepository.save(em);
+            registrationRepository.save(em);
             return ResponseEntity.ok("Successfully Updated");
         }
 
@@ -151,7 +151,7 @@ public class Registration {
 
     @GetMapping("/hello")
     public String hello() {
-       // out.println("Hello");
+        // out.println("Hello");
 
         return "Hello guy from Spring Boot Good !";
     }
@@ -160,7 +160,7 @@ public class Registration {
     @GetMapping("/getAll")
     public ResponseEntity<?> getAllEmployees(@RequestParam String status,
                                              @RequestHeader(value = "Authorization", required = true) String token, Authentication authentication) {
-      //  System.out.println("Authenticated User: " + authentication);
+        //  System.out.println("Authenticated User: " + authentication);
         List<Employee> data=registrationRepository.findByStatus("1");
         data.removeIf(e-> e.getIdNumber().equals("SNVN_Developer"));// hide developer info
         //
@@ -189,7 +189,7 @@ public class Registration {
                     }
                 }
 
-           //     System.out.println(values.size()+"  "+values); // Print as a list
+                //     System.out.println(values.size()+"  "+values); // Print as a list
                 Employee ee=new Employee();
                 ee.setCurrentTimee(convertUtcToDhaka(values.get(1)));
                 ee.setDesignation(values.get(2));
@@ -202,8 +202,8 @@ public class Registration {
                 ee.setEmail("example"+k+"@gmail.com");
                 ee.setPassword(passwordEncoder.encode(k+""));
 
-                 registrationRepository.save(ee);
-                 k++;
+                registrationRepository.save(ee);
+                k++;
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -256,7 +256,7 @@ public class Registration {
     public ResponseEntity<Map<String, String>> login(HttpServletRequest request, HttpServletResponse response,
                                                      FilterChain chain, @RequestBody Map<String, String> requestData) {
 
-       // readCSVForInsertUser("C:\\Users\\01957\\Downloads/userData.csv");
+        // readCSVForInsertUser("C:\\Users\\01957\\Downloads/userData.csv");
 
         Map<String, String> responseData = new HashMap<>();
 
@@ -277,8 +277,8 @@ public class Registration {
         }
 
         Employee employee = data.get();
-       // out.println(employee.getName()+"  "+employee.getPosition()+"  "+employee.getType());
-            boolean result=false;
+        // out.println(employee.getName()+"  "+employee.getPosition()+"  "+employee.getType());
+        boolean result=false;
         // Restrict SNVN developers
 
         List<String> typeList = employee.getType();
@@ -296,13 +296,8 @@ public class Registration {
         }
 
         // Generate Tokens
-<<<<<<< HEAD
-        String token = jwtGenerator.generateToken(username);
-        String refreshToken = jwtGenerator.generateRefreshToken(username);
-=======
         String token = jwtGenerator.generateToken(username, employee.getType());
         String refreshToken = jwtGenerator.generateRefreshToken(username, employee.getType());
->>>>>>> e578cacc7894235eed0f181de9721cbe75df770f
 
         // Successful authentication response
         responseData.put("token", token);
@@ -341,24 +336,20 @@ public class Registration {
                 List<String> role = (List<String>) claims.get("role");  // Fix role extraction
 
                 // Generate a new access token using the same role
-<<<<<<< HEAD
-                String newAccessToken = jwtGenerator.generateToken(username);
-=======
                 String newAccessToken = jwtGenerator.generateToken(username, role);
->>>>>>> e578cacc7894235eed0f181de9721cbe75df770f
 
                 Optional<Employee> data = registrationRepository.findByEmailAndStatus(username, "1");
                 boolean result=false;
                 Employee data1=data.get();
                 if (data1.getType().contains("SNVN")) {
-                   result=true;
+                    result=true;
                 }
                 // Create response map
                 Map<String, String> dataT = new HashMap<>();
                 dataT.put("accessToken", newAccessToken);
 
                 if(data.isPresent()){
-                 Employee mm=data.get();
+                    Employee mm=data.get();
                     dataT.put("Role",mergeActiveRoles(mm.getType(),result));
                 }
                 else{
@@ -419,7 +410,7 @@ public class Registration {
             updated=true;
         }
         else{
-           // out.println("Not Found");
+            // out.println("Not Found");
         }
 
         if (updated) {
@@ -441,7 +432,7 @@ public class Registration {
         List<String> positions=new ArrayList();
         Prepositions.forEach(e->{
             positions.add(Integer.toString(e));
-           // out.println(e);
+            // out.println(e);
         });
 
         List<Employee> returndata= new ArrayList<>();
@@ -457,7 +448,7 @@ public class Registration {
         returndata.forEach(e->{
             //out.println(e.getName()+"  "+e.getPosition());
         });
-       // out.println(Arrays.toString(returndata.toArray()));
+        // out.println(Arrays.toString(returndata.toArray()));
         return returndata;
     }
 
@@ -525,7 +516,7 @@ public class Registration {
 
         // Return JSON string
         String resultJson = new Gson().toJson(combinedRole);
-     //   System.out.println(resultJson);
+        //   System.out.println(resultJson);
         return resultJson;
     }
 
@@ -592,19 +583,19 @@ public class Registration {
         // Convert combined menus to a list
         combinedRole.setMenus(new ArrayList<>(menuMap.values()));
         result=false;
-       // out.println(combinedRole.getMenus());
+        // out.println(combinedRole.getMenus());
         combinedRole.getMenus().forEach(e->{
             if(e.getMenuName().equals("Owner")){
                 e.getPages().forEach(f->{
-                     if(f.getPageName().equals("Permission")){
-                         f.getComponents().forEach(g->{
-                           // out.println(g.getComponentName());
-                             if(g.getComponentName().equals("Save or Update")){
+                    if(f.getPageName().equals("Permission")){
+                        f.getComponents().forEach(g->{
+                            // out.println(g.getComponentName());
+                            if(g.getComponentName().equals("Save or Update")){
 
-                               result=true;
-                             }
-                         });
-                     }
+                                result=true;
+                            }
+                        });
+                    }
                 });
             }
         });
@@ -614,12 +605,12 @@ public class Registration {
     }
 
     public  int ownerShipCount(){
-         count =0;
+        count =0;
         List<Employee> data=registrationRepository.findByStatus("1");
-       // out.println(data.size());
+        // out.println(data.size());
         data.forEach(e->{
             if(mergeRolesStatus(e.getType())){
-               count++;
+                count++;
             }
 
         });

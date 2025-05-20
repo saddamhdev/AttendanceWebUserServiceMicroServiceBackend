@@ -61,7 +61,7 @@ public class Quiz_StudentController {
         return ResponseEntity.ok(data);
     }
 
-    @PostMapping("/login")
+    /*@PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(HttpServletRequest request, HttpServletResponse response,
                                                      FilterChain chain, @RequestBody Map<String, String> requestData) {
        // String filePath = "C:\\Users\\01957\\Downloads/pabna.xlsx";
@@ -110,7 +110,7 @@ public class Quiz_StudentController {
         }
 
         return ResponseEntity.ok(responseData);
-    }
+    }*/
 
     public void readExcelFile(String filePath) {
         try (FileInputStream fis = new FileInputStream(filePath);

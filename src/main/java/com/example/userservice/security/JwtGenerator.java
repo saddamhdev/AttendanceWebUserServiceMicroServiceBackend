@@ -13,12 +13,8 @@ import java.util.List;
 
 @Component  // Ensure this annotation is present!
 public class JwtGenerator {
-   public static String secretKey = "Yn2kjibddFAWtnPJ2AFlL8WXmohJMCvigQggaEypa5Ejvxcvbjxc";
-<<<<<<< HEAD
-    public  String generateToken(String username){
-=======
+    public static String secretKey = "Yn2kjibddFAWtnPJ2AFlL8WXmohJMCvigQggaEypa5Ejvxcvbjxc";
     public  String generateToken(String username, List<String> role){
->>>>>>> e578cacc7894235eed0f181de9721cbe75df770f
 
         Instant now = Instant.now(); // Current time
         Instant expirationTime = now.plusSeconds(3600); // Token expires in 1 hour (3600 sec)
@@ -26,10 +22,7 @@ public class JwtGenerator {
                 .setIssuer("saddamnvn")
                 .setSubject(username)
                 .claim("name", username)
-<<<<<<< HEAD
-=======
                 .claim("role",  role)  // ✅ Prefix role with "ROLE_"
->>>>>>> e578cacc7894235eed0f181de9721cbe75df770f
                 .setIssuedAt(Date.from(now))  // Issued at current time
                 .setExpiration(Date.from(expirationTime)) // Expiration set dynamically
                 .signWith(
@@ -37,7 +30,7 @@ public class JwtGenerator {
                         Base64.getDecoder().decode(secretKey) // Decoding Base64 properly
                 )
                 .compact();
-       // System.out.println("Generated JWT: " + jws);
+        // System.out.println("Generated JWT: " + jws);
         return  jws;
     }
     /*public static void main(String[] args) {
@@ -70,23 +63,16 @@ public class JwtGenerator {
         }
     }*/
 
-<<<<<<< HEAD
-    public  String generateRefreshToken(String username) {
-=======
     public  String generateRefreshToken(String username,List<String> role) {
->>>>>>> e578cacc7894235eed0f181de9721cbe75df770f
         Instant now = Instant.now();
         Instant expirationTime = now.plusSeconds(86400 * 2); // 7 days validity
-       // Instant expirationTime = now.plusSeconds(120); // 7 days validity
+        // Instant expirationTime = now.plusSeconds(120); // 7 days validity
 
         return Jwts.builder()
                 .setIssuer("saddamnvn")
                 .setSubject(username)
                 .claim("type", "refresh") // To differentiate from access tokens
-<<<<<<< HEAD
-=======
                 .claim("role",  role)  // ✅ Prefix role with "ROLE_"
->>>>>>> e578cacc7894235eed0f181de9721cbe75df770f
                 .setIssuedAt(Date.from(now))
                 .setExpiration(Date.from(expirationTime))
                 .signWith(SignatureAlgorithm.HS256, Base64.getDecoder().decode(secretKey))
@@ -102,12 +88,12 @@ public class JwtGenerator {
             String username = claims.getSubject();
             Date expiration = claims.getExpiration();
 
-           // System.out.println("Extracted Username: " + username);
-           // System.out.println("Token Expiration Date: " + expiration);
+            // System.out.println("Extracted Username: " + username);
+            // System.out.println("Token Expiration Date: " + expiration);
 
             return (username.equals(userDetails.getUsername()) && expiration.after(new Date()));
         } catch (Exception e) {
-           // System.out.println("❌ Invalid or malformed token: " + e.getMessage());
+            // System.out.println("❌ Invalid or malformed token: " + e.getMessage());
         }
         return false;
     }
@@ -144,11 +130,11 @@ public class JwtGenerator {
                     .getBody();
 
             Date expirationDate = claims.getExpiration();
-          //  System.out.println("Token Expiration Date: " + expirationDate);
+            //  System.out.println("Token Expiration Date: " + expirationDate);
 
             return expirationDate.before(new Date()); // Check if the token is expired
         } catch (Exception e) {
-          //  System.out.println("Invalid or malformed token: " + e.getMessage());
+            //  System.out.println("Invalid or malformed token: " + e.getMessage());
             return false;
         }
     }

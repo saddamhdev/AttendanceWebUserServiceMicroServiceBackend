@@ -29,23 +29,19 @@ public class JwtFilter extends OncePerRequestFilter {
     public void doFilterInternal(HttpServletRequest request,
                                  HttpServletResponse response,
                                  FilterChain chain) throws ServletException, IOException {
-       // System.out.println("Incoming Request Headers:");
+        // System.out.println("Incoming Request Headers:");
         request.getHeaderNames().asIterator().forEachRemaining(header ->{
 
-            //  System.out.println(header + ": " + request.getHeader(header))
+                    //  System.out.println(header + ": " + request.getHeader(header))
                 }
 
         );
 
         final String authHeader = request.getHeader("Authorization");
-<<<<<<< HEAD
         // System.out.println("Auth Header Received: " + authHeader);
-=======
-       // System.out.println("Auth Header Received: " + authHeader);
->>>>>>> e578cacc7894235eed0f181de9721cbe75df770f
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-          //  System.out.println("Missing or Invalid Token");
+            //  System.out.println("Missing or Invalid Token");
             chain.doFilter(request, response);
             return;
         }
@@ -70,9 +66,9 @@ public class JwtFilter extends OncePerRequestFilter {
                 authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-               // System.out.println("User Authenticated: " + username);
+                // System.out.println("User Authenticated: " + username);
             } else {
-               // System.out.println("Invalid Token");
+                // System.out.println("Invalid Token");
             }
         }
 

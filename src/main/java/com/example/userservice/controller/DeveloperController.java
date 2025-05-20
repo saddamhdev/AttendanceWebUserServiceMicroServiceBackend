@@ -57,13 +57,13 @@ public class DeveloperController {
     private RegistrationRepository registrationRepository;
 
     @Autowired
-     private EmployeeService employeeService;
+    private EmployeeService employeeService;
 
     @PostMapping("/insert")
     public ResponseEntity<String> insertEmployee(@RequestBody Map<String, String> requestData) {
         // out.println(requestData);
 
-         developerRepository.save(new Developer(requestData.get("menuName")));
+        developerRepository.save(new Developer(requestData.get("menuName")));
 
         return ResponseEntity.ok("Successfully Inserted");
     }
@@ -89,7 +89,7 @@ public class DeveloperController {
 
             // Save updated developer object
             developerRepository.save(developer);
-          //  System.out.println(developer);
+            //  System.out.println(developer);
 
             return ResponseEntity.ok("Successfully Inserted");
         }
@@ -100,7 +100,7 @@ public class DeveloperController {
     @PostMapping("/insertComponent")
 
     public ResponseEntity<String> insertEmployeeComponent(@RequestBody Map<String, String> requestData) {
-      //  System.out.println(requestData);
+        //  System.out.println(requestData);
 
         Optional<Developer> optionalDeveloper = developerRepository.findByMenuName(requestData.get("menuName"));
 
@@ -127,7 +127,7 @@ public class DeveloperController {
 
             // Save updated developer object
             developerRepository.save(developer);
-         //   System.out.println(developer);
+            //   System.out.println(developer);
 
             return ResponseEntity.ok("Successfully Inserted");
         }
@@ -145,7 +145,7 @@ public class DeveloperController {
     @GetMapping("/getAll")
     public ResponseEntity<?> getAllEmployees(@RequestParam String status,
                                              @RequestHeader(value = "Authorization", required = true) String token, Authentication authentication) {
-      //  System.out.println("Authenticated User: " + authentication);
+        //  System.out.println("Authenticated User: " + authentication);
         return ResponseEntity.ok((developerRepository.findAll()));
     }
 
@@ -170,7 +170,7 @@ public class DeveloperController {
     public  Map<String, String> login(HttpServletRequest request, HttpServletResponse response,
                                       FilterChain chain,@RequestBody Map<String, String> requestData) {
 
-       // out.println(response);
+        // out.println(response);
         String username = requestData.get("email");
         String password = requestData.get("password");
         Optional<Employee> data = registrationRepository.findByEmailAndStatus(username, "1");
@@ -181,18 +181,11 @@ public class DeveloperController {
             // Compare raw password with the stored encoded password
             if (passwordEncoder.matches(password, employee.getPassword())) {
 
-<<<<<<< HEAD
-                String token = jwtGenerator.generateToken(username);
-               // System.out.println("Generated Token: " + token);
-
-                String refreshToken = jwtGenerator.generateRefreshToken(username);
-=======
                 String token = jwtGenerator.generateToken(username,employee.getType());
-               // System.out.println("Generated Token: " + token);
+                // System.out.println("Generated Token: " + token);
 
                 String refreshToken = jwtGenerator.generateRefreshToken(username,employee.getType());
->>>>>>> e578cacc7894235eed0f181de9721cbe75df770f
-               // out.println("refreshToken "+refreshToken);
+                // out.println("refreshToken "+refreshToken);
                 // store token in database
 
                 // Create response map
@@ -252,11 +245,7 @@ public class DeveloperController {
                 List<String> role = (List<String>) claims.get("role");  // Fix role extraction
 
                 // Generate a new access token using the same role
-<<<<<<< HEAD
-                String newAccessToken = jwtGenerator.generateToken(username);
-=======
                 String newAccessToken = jwtGenerator.generateToken(username, role);
->>>>>>> e578cacc7894235eed0f181de9721cbe75df770f
 
                 return ResponseEntity.ok(Map.of("accessToken", newAccessToken));
             }
@@ -312,7 +301,7 @@ public class DeveloperController {
             updated=true;
         }
         else{
-           // out.println("Not Found");
+            // out.println("Not Found");
         }
 
         if (updated) {
@@ -334,7 +323,7 @@ public class DeveloperController {
         List<String> positions=new ArrayList();
         Prepositions.forEach(e->{
             positions.add(Integer.toString(e));
-           // out.println(e);
+            // out.println(e);
         });
 
         List<Employee> returndata= new ArrayList<>();
@@ -350,7 +339,7 @@ public class DeveloperController {
         returndata.forEach(e->{
             //out.println(e.getName()+"  "+e.getPosition());
         });
-       // out.println(Arrays.toString(returndata.toArray()));
+        // out.println(Arrays.toString(returndata.toArray()));
         return returndata;
     }
 
