@@ -4,7 +4,7 @@ pipeline {
     environment {
         PROD_HOST  = credentials('DO_HOST')
         PROD_USER  = credentials('DO_USER')
-        DEPLOY_DIR = '/www/wwwroot/snvn.deepseahost.com/userservice'
+        DEPLOY_DIR = '/www/wwwroot/CITSNVN/attendance/springbootuserservice'
         JAR_NAME   = 'userservice-1.0.jar'
         PORT       = '3080'
     }
