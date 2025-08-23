@@ -8,6 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.mongodb.config.EnableMongoAuditing;
 
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.client.RestTemplate;
 import com.example.userservice.model.*;
 
@@ -16,6 +17,7 @@ import java.util.TimeZone;
 @EnableMongoAuditing
 
 @SpringBootApplication
+@EnableScheduling
 @EnableMongoRepositories(basePackages = "com.example.userservice.repository")
 public class UserserviceApplication implements CommandLineRunner {
 
