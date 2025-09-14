@@ -224,10 +224,11 @@ public class Registration {
             }
 
             Employee data=optionalEmployee.get();
-            if (data.getType().contains("SNVN")) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body("This is not permitted to Delete  . Reserved account");
+            if(data.getType() !=null){
+                if (data.getType().contains("SNVN")) {
+                    return ResponseEntity.status(HttpStatus.CONFLICT).body("This is not permitted to Delete  . Reserved account");
+                }
             }
-
 
             Employee employee = optionalEmployee.get();
 
