@@ -106,7 +106,7 @@ public class Registration {
     }
 
     @PostMapping("/update")
-    public ResponseEntity<String> updateEmployee(@RequestBody Map<String, String> requestData) {
+    public ResponseEntity<String> updateEmployee(@RequestBody Map<String, String> requestData , HttpServletRequest request) {
 
         // out.println(requestData);
         //  Optional<Employee> data = registrationRepository.findByIdNumberAndStatus(requestData.get("idNumber"), "1");
@@ -141,6 +141,9 @@ public class Registration {
             em.setName(requestData.get("name"));
             // Save the employee data to the database
             registrationRepository.save(em);
+            if(mm.getIdNumber() !=null && em.getIdNumber() !=null && !mm.getIdNumber().equals(em.getIdNumber())){
+                employeeService.updateAttendance(request.getHeader("Authorization"),mm.getIdNumber(),em.getIdNumber());
+            }
             return ResponseEntity.ok("Successfully Updated");
         }
 
@@ -163,6 +166,9 @@ public class Registration {
         //  System.out.println("Authenticated User: " + authentication);
         List<Employee> data=registrationRepository.findByStatus("1");
         data.removeIf(e-> e.getIdNumber().equals("SNVN_Developer"));// hide developer info
+        //System.out.println("Employees fetched: " + data.size());
+        //data.stream().limit(1).forEach(System.out::println);
+       // data.forEach(out::println);
         //
         // readCSV("C:\\Users\\Saddam\\Downloads/userData.csv");
         return ResponseEntity.ok(sorting(data));
@@ -447,7 +453,7 @@ public class Registration {
             });
         });
         returndata.forEach(e->{
-            //out.println(e.getName()+"  "+e.getPosition());
+           // out.println(e.getName()+"  "+e.getPosition());
         });
         // out.println(Arrays.toString(returndata.toArray()));
         return returndata;
