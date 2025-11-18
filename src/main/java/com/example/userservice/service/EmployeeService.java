@@ -38,20 +38,21 @@ public class EmployeeService {
         }
 
     }
-    public void updateAttendance(String header ,String oldEmployeeId,String newEmployeeId) {
-        // Set headers
+    public void updateAttendance(String header, String oldEmployeeId, String newEmployeeId) {
+
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", header); // Use the provided header
+        headers.set("Authorization", header);
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        // Create HttpEntity with headers
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
-        // Call the external API with headers
-        // also send oldEmployeeId and newEmployeeId as query params
         String urlWithParams = userServiceUrl + "?oldEmployeeId=" + oldEmployeeId + "&newEmployeeId=" + newEmployeeId;
-        ResponseEntity<Employee[]> response =
-                restTemplate.exchange(urlWithParams, HttpMethod.POST, entity, Employee[].class);
 
+        // ✔ Expect plain string instead of JSON
+        ResponseEntity<String> response =
+                restTemplate.exchange(urlWithParams, HttpMethod.POST, entity, String.class);
+
+        System.out.println("UpdateAttendance API Response = " + response.getBody());
     }
+
 }
