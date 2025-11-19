@@ -85,17 +85,17 @@ public class Registration {
 
         if (data.isEmpty()) {
             Employee em=new Employee();
-            em.setPassword(passwordEncoder.encode(requestData.get("password"))); // Hash password
+            em.setPassword(passwordEncoder.encode(requestData.get("password").trim())); // Hash password
             em.setType(null);
-            em.setEndDate(requestData.get("endDate"));
-            em.setStatus(requestData.get("status"));
+            em.setEndDate(requestData.get("endDate").trim());
+            em.setStatus(requestData.get("status").trim());
             em.setPosition(requestData.get("position"));
-            em.setDesignation(requestData.get("designation"));
-            em.setEmail(requestData.get("email"));
-            em.setJoinDate(requestData.get("joinDate"));
-            em.setIdNumber(requestData.get("idNumber"));
-            em.setCurrentTimee(requestData.get("currentTimee"));
-            em.setName(requestData.get("name"));
+            em.setDesignation(requestData.get("designation").trim());
+            em.setEmail(requestData.get("email").trim());
+            em.setJoinDate(requestData.get("joinDate").trim());
+            em.setIdNumber(requestData.get("idNumber").trim());
+            em.setCurrentTimee(requestData.get("currentTimee").trim());
+            em.setName(requestData.get("name").trim());
             // Save the employee data to the database
             registrationRepository.save(em);
             return ResponseEntity.ok("Successfully Inserted");
@@ -128,17 +128,17 @@ public class Registration {
             registrationRepository.save(mm);
 
             Employee em=new Employee();
-            em.setPassword(passwordEncoder.encode(requestData.get("password"))); // Hash password
+            em.setPassword(passwordEncoder.encode(requestData.get("password").trim())); // Hash password
             em.setType(mm.getType());
-            em.setEndDate(requestData.get("endDate"));
-            em.setStatus(requestData.get("status"));
+            em.setEndDate(requestData.get("endDate").trim());
+            em.setStatus(requestData.get("status").trim());
             em.setPosition(mm.getPosition());
-            em.setDesignation(requestData.get("designation"));
-            em.setEmail(requestData.get("email"));
-            em.setJoinDate(requestData.get("joinDate"));
-            em.setIdNumber(requestData.get("idNumber"));
-            em.setCurrentTimee(requestData.get("currentTimee"));
-            em.setName(requestData.get("name"));
+            em.setDesignation(requestData.get("designation").trim());
+            em.setEmail(requestData.get("email").trim());
+            em.setJoinDate(requestData.get("joinDate").trim());
+            em.setIdNumber(requestData.get("idNumber").trim());
+            em.setCurrentTimee(requestData.get("currentTimee").trim());
+            em.setName(requestData.get("name").trim());
             // Save the employee data to the database
             registrationRepository.save(em);
             if(mm.getIdNumber() !=null && em.getIdNumber() !=null && !mm.getIdNumber().equals(em.getIdNumber())){
