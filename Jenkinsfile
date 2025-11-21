@@ -1,15 +1,38 @@
+
 pipeline {
     agent any
+    tools {
+        maven 'maven4'
+    }
 
     environment {
-        PROD_HOST  = credentials('DO_HOST')
-        PROD_USER  = credentials('DO_USER')
+        PROD_USER = "root"                       // FIXED ✔
+        PROD_HOST = "159.89.172.251"            // FIXED ✔
         DEPLOY_DIR = '/www/wwwroot/CITSNVN/attendance/springbootuserservice'
-        JAR_NAME   = 'userservice-1.0.jar'
         PORT       = '3080'
     }
 
     stages {
+
+        stage('Verify Credentials') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'DO_SSH_PASSWORD',
+                                                 usernameVariable: 'SSH_USER',
+                                                 passwordVariable: 'SSH_PASS')]) {
+                    echo "🟢 Credentials are OK."
+                }
+            }
+        }
+
+        stage('Debug Vars') {
+            steps {
+                sh '''
+                    echo HOST=$PROD_HOST
+                    echo USER=$PROD_USER
+                '''
+            }
+        }
+
         stage('Clone Repository') {
             steps {
                 git branch: 'main', url: 'https://github.com/Saddam-Hossen/AttendanceWebUserServiceMicroServiceBackend'
@@ -18,42 +41,87 @@ pipeline {
 
         stage('Build') {
             steps {
-                bat 'mvn clean install'
+                sh 'mvn clean package -DskipTests'
+                sh 'echo ==== BUILT FILES ===='
+                sh 'ls -lah target'
             }
         }
 
-        stage('Deploy JAR to Server') {
+        stage('Detect Built JAR') {
             steps {
-                withCredentials([sshUserPrivateKey(credentialsId: 'DO_SSH_KEY', keyFileVariable: 'SSH_KEY')]) {
-                    script {
-                        bat """
-                        "C:/Program Files/Git/bin/bash.exe" -c "scp -o StrictHostKeyChecking=no -i '${SSH_KEY}' target/${JAR_NAME} ${PROD_USER}@${PROD_HOST}:${DEPLOY_DIR}/${JAR_NAME}"
-                        """
-                    }
+                script {
+                    JAR_NAME = sh(
+                        script: "ls target/*.jar | head -n 1 | xargs -n 1 basename",
+                        returnStdout: true
+                    ).trim()
+
+                    echo "🟢 Detected JAR: ${JAR_NAME}"
                 }
             }
         }
 
-        stage('Start Spring Boot App (Remote)') {
-            steps {
-                withCredentials([sshUserPrivateKey(credentialsId: 'DO_SSH_KEY', keyFileVariable: 'SSH_KEY')]) {
-                    script {
-                        bat """
-                        "C:/Program Files/Git/bin/bash.exe" -c "ssh -o StrictHostKeyChecking=no -i '${SSH_KEY}' ${PROD_USER}@${PROD_HOST} 'cd ${DEPLOY_DIR}; PID=\$(lsof -t -i:${PORT}); if [ ! -z \$PID ]; then kill -9 \$PID; fi; nohup java -Xms32m -Xmx64m -jar ${JAR_NAME} --server.port=${PORT} > app.log 2>&1 &'"
+       stage('Upload JAR to VPS') {
+           steps {
+               withCredentials([usernamePassword(credentialsId: 'DO_SSH_PASSWORD',
+                                                usernameVariable: 'SSH_USER',
+                                                passwordVariable: 'SSH_PASS')]) {
+
+                   sh """
+                       echo "📤 Uploading JAR to server..."
+
+                       sshpass -p "$SSH_PASS" scp -o StrictHostKeyChecking=no \
+                           target/${JAR_NAME} ${PROD_USER}@${PROD_HOST}:${DEPLOY_DIR}/${JAR_NAME}
+                   """
+               }
+           }
+       }
+
+            stage('Restart App on VPS') {
+                steps {
+                    withCredentials([
+                        usernamePassword(
+                            credentialsId: 'DO_SSH_PASSWORD',
+                            usernameVariable: 'SSH_USER',
+                            passwordVariable: 'SSH_PASS'
+                        )
+                    ]) {
+
+                        sh 'echo "Restarting app on VPS..."'
+
+                        // 1. Kill old process
+                        sh """
+                            sshpass -p "$SSH_PASS" ssh -o StrictHostKeyChecking=no ${PROD_USER}@${PROD_HOST} \
+                            pkill -f ${JAR_NAME} || echo no-process
+                        """
+
+                        // 2. Fix directory permissions BEFORE starting app
+                        sh """
+                            sshpass -p "$SSH_PASS" ssh -o StrictHostKeyChecking=no ${PROD_USER}@${PROD_HOST} \
+                            chmod -R 777 ${DEPLOY_DIR}
+                        """
+
+                        // 3. Start new process
+                        sh """
+                            sshpass -p "$SSH_PASS" ssh -o StrictHostKeyChecking=no ${PROD_USER}@${PROD_HOST} \
+                            "nohup java -jar ${DEPLOY_DIR}/${JAR_NAME} --server.port=${PORT} >> ${DEPLOY_DIR}/app.log 2>&1 &"
+                        """
+
+                        // 4. Confirm running
+                        sh """
+                            sshpass -p "$SSH_PASS" ssh -o StrictHostKeyChecking=no ${PROD_USER}@${PROD_HOST} \
+                            pgrep -f ${JAR_NAME} && echo started || echo failed
                         """
                     }
                 }
             }
-        }
+
+
+
 
     }
 
     post {
-        failure {
-            echo "❌ Spring Boot deployment failed."
-        }
-        success {
-            echo "✅ Spring Boot deployed successfully."
-        }
+        success { echo "✅ Deployment Completed Successfully!" }
+        failure { echo "❌ Deployment Failed!" }
     }
 }
