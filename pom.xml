@@ -78,6 +78,14 @@
 			<artifactId>gson</artifactId>
 			<version>2.10.1</version>
 		</dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-logging</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+        </dependency>
 
 
 		<!-- JJWT Jackson (for JSON processing, if needed) -->
