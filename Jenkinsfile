@@ -132,11 +132,11 @@ SCRIPT
                             sleep 2
                         '''
 
-                        // 5. Confirm running
-                        sh '''
-                            sshpass -p "$SSH_PASS" ssh -o StrictHostKeyChecking=no ${PROD_USER}@${PROD_HOST} \
-                            pgrep -f "icsQuizUserService" && echo started || echo failed
-                        '''
+                       // 5. Confirm running
+                           sh '''
+                               sshpass -p "$SSH_PASS" ssh -o StrictHostKeyChecking=no ${PROD_USER}@${PROD_HOST} \
+                               "lsof -ti:${PORT} && echo '✅ Process started on port ${PORT}' || echo '❌ No process on port ${PORT}'"
+                           '''
 
                         // 6. Display last lines of log
                         sh '''
